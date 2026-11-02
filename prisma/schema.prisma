@@ -1,0 +1,119 @@
+// Lappidoth & Co. — data model
+// SQLite for local development. To move to Postgres in production, change
+// `provider` to "postgresql" and point DATABASE_URL at your database.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Catalog ──────────────────────────────────────────────────────────────
+
+model Collection {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id           String      @id @default(cuid())
+  slug         String      @unique
+  name         String
+  tagline      String
+  description  String
+  topNotes     String
+  heartNotes   String
+  baseNotes    String
+  priceCents   Int
+  currency     String      @default("USD")
+  burnTime     String      @default("30+ hours")
+  netWeight    String      @default("5 oz / 141 g")
+  wax          String      @default("Natural soy wax")
+  image        String
+  active       Boolean     @default(true)
+  sortOrder    Int         @default(0)
+  collectionId String
+  collection   Collection  @relation(fields: [collectionId], references: [id])
+  orderItems   OrderItem[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+// ─── CRM ──────────────────────────────────────────────────────────────────
+
+// One row per person, keyed by email. Every form on the site upserts here.
+model Customer {
+  id             String        @id @default(cuid())
+  email          String        @unique
+  firstName      String?
+  lastName       String?
+  phone          String?
+  // LEAD | SUBSCRIBER | CUSTOMER | VIP | ARCHIVED (see src/lib/crm.ts)
+  status         String        @default("LEAD")
+  // Where we first met them: newsletter | contact | waitlist | admin | import
+  source         String        @default("website")
+  marketingOptIn Boolean       @default(false)
+  tags           Tag[]
+  interactions   Interaction[]
+  orders         Order[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  customers Customer[]
+}
+
+// The customer timeline: form submissions, notes, emails, orders.
+model Interaction {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  // NEWSLETTER_SIGNUP | CONTACT_FORM | WAITLIST | NOTE | ORDER_PLACED
+  type       String
+  subject    String?
+  body       String?
+  // JSON string for extra context (product slug, page, UTM, etc.)
+  metadata   String?
+  createdAt  DateTime @default(now())
+
+  @@index([customerId, createdAt])
+}
+
+// ─── Commerce (ready for a checkout integration such as Stripe) ──────────
+
+model Order {
+  id            String      @id @default(cuid())
+  number        String      @unique
+  customerId    String
+  customer      Customer    @relation(fields: [customerId], references: [id])
+  // PENDING | PAID | FULFILLED | CANCELLED | REFUNDED
+  status        String      @default("PENDING")
+  subtotalCents Int
+  totalCents    Int
+  currency      String      @default("USD")
+  externalRef   String?     // e.g. Stripe checkout session id
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product @relation(fields: [productId], references: [id])
+  quantity       Int
+  unitPriceCents Int
+}

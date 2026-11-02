@@ -1,0 +1,275 @@
+.admin {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  background: var(--paper);
+  font-size: 0.92rem;
+}
+
+.admin-side {
+  background: var(--ink);
+  color: var(--linen);
+  padding: 2rem 1.5rem;
+  display: grid;
+  align-content: start;
+  gap: 2.5rem;
+}
+
+.admin-side .wordmark {
+  font-size: 1.35rem;
+}
+
+.admin-side nav {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.admin-side nav a {
+  text-decoration: none;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.admin-side nav a:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.admin-main {
+  padding: 2.5rem clamp(1rem, 3vw, 3rem);
+  min-width: 0;
+}
+
+.admin-main h1 {
+  font-size: 2.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.admin-sub {
+  color: var(--ink-soft);
+  margin-bottom: 2rem;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 1.25rem 1.4rem;
+}
+
+.stat .label {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.stat .value {
+  font-family: var(--font-serif);
+  font-size: 2.6rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.panel h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0.75rem 0.75rem 0.75rem 0;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 0.85rem 0.75rem 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.table a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.table a:hover {
+  text-decoration: underline;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.pill {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--line);
+  background: var(--linen);
+  white-space: nowrap;
+}
+
+.pill[data-v="CUSTOMER"],
+.pill[data-v="VIP"] {
+  background: var(--ink);
+  color: var(--linen);
+  border-color: var(--ink);
+}
+
+.pill[data-v="SUBSCRIBER"] {
+  background: var(--sand);
+}
+
+.muted {
+  color: var(--ink-soft);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.toolbar input,
+.toolbar select,
+.admin-form textarea,
+.admin-form select,
+.admin-form input {
+  font: inherit;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0.6rem 0.75rem;
+  color: var(--ink);
+}
+
+.toolbar input {
+  min-width: 240px;
+  flex: 1;
+}
+
+.admin .btn {
+  min-height: 2.5rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.66rem;
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.timeline li {
+  border-left: 2px solid var(--sand);
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.timeline .when {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.timeline .body {
+  white-space: pre-wrap;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.6rem 1rem;
+  margin: 0;
+}
+
+.kv dt {
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding-top: 0.2rem;
+}
+
+.kv dd {
+  margin: 0;
+  word-break: break-word;
+}
+
+.admin-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-form textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+@media (max-width: 900px) {
+  .admin {
+    grid-template-columns: 1fr;
+  }
+  .admin-side {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+  .admin-side nav {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}

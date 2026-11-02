@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lappidoth & Co. — Website + CRM
 
-## Getting Started
+The brand website ("Fragrance to Fire") plus a built-in CRM that captures every
+newsletter signup, contact enquiry and product waitlist in one customer database.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, TypeScript) — website, API and admin in one app
+- **Prisma + SQLite** for local development. Switch to Postgres for production by changing
+  `provider` in `prisma/schema.prisma` and pointing `DATABASE_URL` at your database.
+- **zod** for validating everything that comes in from forms
+
+## Getting started
 
 ```bash
+npm install
+cp .env.example .env      # then set ADMIN_PASSWORD
+npm run setup             # creates the database and seeds the products
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Website: http://localhost:3000
+- CRM: http://localhost:3000/admin (log in with `ADMIN_USER` / `ADMIN_PASSWORD`)
+- Browse raw data: `npm run db:studio`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project layout
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+prisma/
+  schema.prisma          Data model: catalog, CRM (customers, tags, interactions), orders
+  seed.ts                The Presence Collection products (prices & notes are placeholders)
+public/images/           Product photography
+src/
+  app/(site)/            Public website: home, shop, product pages, story, contact
+  app/admin/             CRM: dashboard, customer list/search/CSV export, profiles, notes
+  app/api/               Public form endpoints: subscribe, contact, waitlist
+  components/            Header, footer, forms, product card
+  lib/crm.ts             CRM service layer. All customer writes go through here.
+  lib/products.ts        Catalog queries
+  proxy.ts               Password-protects /admin
+```
 
-## Learn More
+## How the CRM works
 
-To learn more about Next.js, take a look at the following resources:
+Every person is one `Customer` row, keyed by email. Each form on the site creates or updates
+that customer and adds an `Interaction` to their timeline. Status moves up automatically
+(LEAD → SUBSCRIBER → CUSTOMER → VIP) and can be set by hand in the admin.
+Admins can add notes, tags and phone numbers, and export everyone to CSV.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Extending it
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The schema and service layer are designed so these can be added without restructuring:
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Checkout:** Stripe Checkout + a webhook that creates `Order` rows and calls
+  `upsertCustomer({ status: "CUSTOMER" })` + `logInteraction({ type: "ORDER_PLACED" })`.
+- **Email marketing:** sync opted-in customers to Klaviyo/Mailchimp from `lib/crm.ts`.
+- **Notifications:** email the team on new contact-form enquiries (e.g. Resend).
+- **Team accounts:** replace the Basic-auth guard in `src/proxy.ts` with Auth.js user logins.
+- **Product admin:** edit products and prices from `/admin` rather than the seed file.
