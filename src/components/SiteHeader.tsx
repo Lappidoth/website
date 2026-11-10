@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BasketButton } from "./BasketButton";
 import { Wordmark } from "./Wordmark";
 
 const links = [
   { href: "/shop", label: "Shop" },
+  { href: "/shop#sets", label: "Gift Sets" },
   { href: "/about", label: "Our Story" },
   { href: "/contact", label: "Contact" },
 ];
@@ -14,8 +16,6 @@ const links = [
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-
-  // Close the mobile menu whenever the route changes.
   const [lastPath, setLastPath] = useState(pathname);
   if (pathname !== lastPath) {
     setLastPath(pathname);
@@ -31,8 +31,7 @@ export function SiteHeader() {
 
   return (
     <header className="site-header">
-      <div className="container">
-        <Wordmark />
+      <div className="container header-inner">
         <button
           type="button"
           className="menu-toggle"
@@ -44,17 +43,19 @@ export function SiteHeader() {
           <span />
           <span />
         </button>
+        <Wordmark />
         <nav id="site-nav" className="nav" data-open={open} aria-label="Main">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              aria-current={pathname.startsWith(l.href) ? "page" : undefined}
+              aria-current={!l.href.includes("#") && pathname.startsWith(l.href) ? "page" : undefined}
             >
               {l.label}
             </Link>
           ))}
         </nav>
+        <BasketButton />
       </div>
     </header>
   );

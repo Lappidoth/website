@@ -1,89 +1,97 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import mark from "../../../../public/brand/logo-mark-ink.png";
 
 export const metadata: Metadata = {
   title: "Our Story",
-  description: "Lappidoth & Co. — hand-poured candles crafted with intention to shape atmosphere.",
+  description: "Lappidoth & Co. — 100% natural soy wax candles, mindfully crafted in small batches.",
 };
 
 export default function AboutPage() {
   return (
     <>
-      <section className="page-hero container">
-        <p className="eyebrow">Our Story</p>
-        <h1 className="script">Fragrance to Fire</h1>
-      </section>
-
-      <section className="container" style={{ paddingBottom: "clamp(4rem, 8vw, 6rem)" }}>
-        <div className="prose">
-          <p className="dropcap">
-            Lappidoth &amp; Co. began with a simple belief: that the atmosphere of a room can change
-            the way we show up in it. A single flame can slow a conversation down, soften the end of
-            a long day, and turn an ordinary evening into something remembered.
-          </p>
-          <p>
-            Our name comes from the Hebrew <em>lappidoth</em> — “torches.” Flames carried with
-            purpose, to light the way for others. That is what we hope each of our candles becomes in
-            your home.
-          </p>
-          <p>
-            Every candle is hand-poured in small batches using natural soy wax and carefully chosen
-            fragrance, then finished by hand. We take our time, because the moments these candles are
-            made for deserve it.
-          </p>
+      <section className="section bg-paper">
+        <div className="container sanctuary">
+          <Image src={mark} alt="Lappidoth & Co. — Fragrance to Fire" className="mark" sizes="440px" priority />
+          <div className="copy">
+            <p className="eyebrow">Our story</p>
+            <h1 style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 600 }}>Curating Your Sanctuary</h1>
+            <p>
+              At Lappidoth &amp; Co, we believe that lighting a candle is more than just a routine; it
+              is an invitation to pause. Founded on the belief that scent has the power to transform a
+              room into a retreat, our 100% natural soy wax candles are mindfully crafted in small
+              batches.
+            </p>
+            <p>
+              From the first pour to the final flicker, every detail is designed to bring a profound
+              sense of calm to your daily life.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="section bg-linen">
+      <section className="section quote-band">
+        <div className="container quote">
+          <blockquote>
+            Lappidoth &amp; Co was born out of a desire to create something pure in a noisy world. I
+            wanted to design a collection that didn&apos;t just smell beautiful, but actually shifted
+            the energy of a room. Every label, every hand-placed petal, and every pour is done with the
+            hope that when you strike a match, you are carving out a moment of intentional peace just
+            for you.
+          </blockquote>
+          <p className="signature">— Ceewhy Ochoga</p>
+        </div>
+      </section>
+
+      <section className="section bg-paper">
         <div className="container split">
           <div className="media">
-            <Image
-              src="/images/hero-presence-collection.jpg"
-              alt="The Presence Collection in morning light"
-              fill
-              sizes="(max-width: 860px) 100vw, 50vw"
-            />
+            <Image src="/images/hero-presence-collection.jpg" alt="The Presence Collection" fill sizes="(max-width: 860px) 100vw, 55vw" />
           </div>
           <div className="copy">
             <p className="eyebrow">The Presence Collection</p>
             <h2>Involved. So Loved. Connect.</h2>
             <p>
-              Our first collection is named for the ways we want to be with one another — engaged,
-              cherished, and truly connected. Three scents, each poured to invite presence into the
-              rooms where life happens.
+              Our first collection is named for the ways we hope to be with one another — deeply
+              engaged, warmly cherished, and truly connected. Three candles, each poured to invite
+              presence into the rooms where life happens.
             </p>
             <div>
-              <Link href="/shop" className="btn">
-                Shop the Collection
-              </Link>
+              <Link href="/shop" className="btn">Shop the Collection</Link>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="section" id="ritual">
+      <section className="section bg-linen" id="care">
         <div className="container">
           <div className="section-head">
             <p className="eyebrow">Candle care</p>
             <h2>Tending the flame</h2>
           </div>
-          <div className="prose">
-            <p>
-              <strong>The first burn matters most.</strong> Allow two to three hours for the melt pool
-              to reach the edge of the glass; this sets the candle&apos;s memory and prevents
-              tunnelling.
-            </p>
-            <p>
-              <strong>Trim the wick</strong> to a quarter inch before every light for a clean, steady
-              flame. <strong>Burn for no more than four hours</strong> at a time, keep away from
-              drafts, and never leave a burning candle unattended.
-            </p>
-            <p>
-              When half an inch of wax remains, it&apos;s time to let it rest. Clean the glass with
-              warm soapy water and give it a second life.
-            </p>
-          </div>
+          <ol className="ritual">
+            <li>
+              <span className="num">i.</span>
+              <h3>The first light</h3>
+              <p>Burn for 2–3 hours until the melt pool reaches the edge of the glass. This prevents tunnelling.</p>
+            </li>
+            <li>
+              <span className="num">ii.</span>
+              <h3>Trim the wick</h3>
+              <p>Before every light, trim the wick to 5 mm for a clean, steady flame.</p>
+            </li>
+            <li>
+              <span className="num">iii.</span>
+              <h3>Choose the hour</h3>
+              <p>Burn for no more than 4 hours at a time, away from draughts — and never out of sight.</p>
+            </li>
+            <li>
+              <span className="num">iv.</span>
+              <h3>A second life</h3>
+              <p>When 1 cm of wax remains, let it rest. Clean the glass with warm soapy water and reuse it.</p>
+            </li>
+          </ol>
         </div>
       </section>
     </>

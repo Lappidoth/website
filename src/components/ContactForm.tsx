@@ -40,6 +40,7 @@ export function ContactForm() {
         <select id="c-subject" name="subject" defaultValue="General enquiry">
           <option>General enquiry</option>
           <option>Order support</option>
+          <option>International delivery</option>
           <option>Wholesale &amp; stockists</option>
           <option>Gifting &amp; events</option>
           <option>Press</option>

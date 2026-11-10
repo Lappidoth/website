@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { connection } from "next/server";
 import { getDashboardStats } from "@/lib/crm";
+import { formatPrice } from "@/lib/format";
 import { TYPE_LABELS, fmtDate, fullName } from "./format";
 
 export default async function AdminDashboard() {
@@ -10,9 +11,21 @@ export default async function AdminDashboard() {
   return (
     <>
       <h1>Dashboard</h1>
-      <p className="admin-sub">Everyone who has reached out, signed up, or joined a waitlist.</p>
+      <p className="admin-sub">Sales, orders and everyone who has reached out or signed up.</p>
 
       <div className="stat-row">
+        <div className="stat">
+          <div className="label">Sales · 30 days</div>
+          <div className="value">{formatPrice(s.revenueCents)}</div>
+        </div>
+        <div className="stat">
+          <div className="label">Orders · 30 days</div>
+          <div className="value">{s.ordersThisMonth}</div>
+        </div>
+        <Link className="stat" href="/admin/orders?status=PAID" style={{ textDecoration: "none" }}>
+          <div className="label">To dispatch</div>
+          <div className="value">{s.toDispatch}</div>
+        </Link>
         <div className="stat">
           <div className="label">Contacts</div>
           <div className="value">{s.total}</div>

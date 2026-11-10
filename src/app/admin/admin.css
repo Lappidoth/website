@@ -157,6 +157,16 @@
   border-color: var(--ink);
 }
 
+.pill[data-v="PAID"] {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.pill[data-v="DISPATCHED"] {
+  background: var(--ink);
+  color: var(--linen);
+}
+
 .pill[data-v="SUBSCRIBER"] {
   background: var(--sand);
 }

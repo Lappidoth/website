@@ -5,10 +5,11 @@ newsletter signup, contact enquiry and product waitlist in one customer database
 
 ## Stack
 
-- **Next.js 16** (App Router, TypeScript) — website, API and admin in one app
-- **Prisma + SQLite** for local development. Switch to Postgres for production by changing
+- **Next.js 16** (App Router, TypeScript): website, API and admin in one app
+- **Stripe Checkout** for payments: cards, Apple Pay, Google Pay, discount codes
+- **Prisma + SQLite** for local development. For production, switch to Postgres by changing
   `provider` in `prisma/schema.prisma` and pointing `DATABASE_URL` at your database.
-- **zod** for validating everything that comes in from forms
+- **zod** validates everything that comes in from the browser
 
 ## Getting started
 
@@ -23,20 +24,37 @@ npm run dev
 - CRM: http://localhost:3000/admin (log in with `ADMIN_USER` / `ADMIN_PASSWORD`)
 - Browse raw data: `npm run db:studio`
 
+## Payments (Stripe)
+
+1. Put your **test** secret key (`sk_test_…`) in `.env` as `STRIPE_SECRET_KEY`.
+2. To receive payment confirmations locally, run the Stripe CLI:
+   `stripe listen --forward-to localhost:3000/api/stripe/webhook`, then put the
+   `whsec_…` it prints into `STRIPE_WEBHOOK_SECRET`.
+3. Pay with test card `4242 4242 4242 4242`, any future expiry date and any CVC.
+4. In production, add a webhook endpoint in the Stripe Dashboard pointing at
+   `https://<your-domain>/api/stripe/webhook` for `checkout.session.completed`,
+   `checkout.session.async_payment_succeeded` and `checkout.session.expired`.
+
+Prices always come from the database. The browser only sends product slugs and quantities.
+Delivery rates and the free-delivery threshold are set in `src/lib/shop-config.ts`.
+
 ## Project layout
 
 ```
 prisma/
   schema.prisma          Data model: catalog, CRM (customers, tags, interactions), orders
-  seed.ts                The Presence Collection products (prices & notes are placeholders)
+  seed.ts                Products: 3 candles at £20, Duo at £38, Trio at £54
 public/images/           Product photography
 src/
-  app/(site)/            Public website: home, shop, product pages, story, contact
-  app/admin/             CRM: dashboard, customer list/search/CSV export, profiles, notes
-  app/api/               Public form endpoints: subscribe, contact, waitlist
+  app/(site)/            Public website: home, shop, products, basket, story, contact, policies
+  app/admin/             Back office: dashboard, orders, customers, notes, CSV export
+  app/api/               subscribe, contact, checkout, stripe/webhook
   components/            Header, footer, forms, product card
   lib/crm.ts             CRM service layer. All customer writes go through here.
-  lib/products.ts        Catalog queries
+  lib/products.ts        Catalogue queries
+  lib/basket.ts          Server-side basket validation & pricing
+  lib/orders.ts          Checkout + order fulfilment (provider-specific code lives here)
+  lib/shop-config.ts     Delivery rates, free-delivery threshold, contact details
   proxy.ts               Password-protects /admin
 ```
 
@@ -51,8 +69,8 @@ Admins can add notes, tags and phone numbers, and export everyone to CSV.
 
 The schema and service layer are designed so these can be added without restructuring:
 
-- **Checkout:** Stripe Checkout + a webhook that creates `Order` rows and calls
-  `upsertCustomer({ status: "CUSTOMER" })` + `logInteraction({ type: "ORDER_PLACED" })`.
+- **Order emails:** branded confirmation and dispatch emails (e.g. via Resend).
+- **Revolut Pay:** a second provider can be added in `lib/orders.ts`. Orders already record `paymentProvider`.
 - **Email marketing:** sync opted-in customers to Klaviyo/Mailchimp from `lib/crm.ts`.
 - **Notifications:** email the team on new contact-form enquiries (e.g. Resend).
 - **Team accounts:** replace the Basic-auth guard in `src/proxy.ts` with Auth.js user logins.

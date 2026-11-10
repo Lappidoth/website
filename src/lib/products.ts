@@ -1,8 +1,9 @@
 import { db } from "./db";
+export { formatPrice } from "./format";
 
-export async function getProducts() {
+export async function getProducts(type?: "CANDLE" | "SET") {
   return db.product.findMany({
-    where: { active: true },
+    where: { active: true, ...(type ? { type } : {}) },
     orderBy: { sortOrder: "asc" },
     include: { collection: true },
   });
@@ -15,10 +16,4 @@ export async function getProduct(slug: string) {
   });
 }
 
-export function formatPrice(cents: number, currency = "USD") {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: cents % 100 === 0 ? 0 : 2,
-  }).format(cents / 100);
-}
+export type ProductWithCollection = NonNullable<Awaited<ReturnType<typeof getProduct>>>;

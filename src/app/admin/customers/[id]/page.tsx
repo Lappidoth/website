@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { CUSTOMER_STATUSES, getCustomer } from "@/lib/crm";
+import { formatPrice } from "@/lib/format";
 import { TYPE_LABELS, fmtDate, fullName } from "../../format";
 import { addNote, updateCustomer } from "./actions";
 
@@ -40,7 +41,15 @@ export default async function CustomerPage(props: PageProps<"/admin/customers/[i
               <dt>Email opt-in</dt>
               <dd>{c.marketingOptIn ? "Yes" : "No"}</dd>
               <dt>Orders</dt>
-              <dd>{c.orders.length}</dd>
+              <dd>
+                {c.orders.length === 0
+                  ? "0"
+                  : c.orders.map((o) => (
+                      <div key={o.id}>
+                        <Link href={`/admin/orders/${o.id}`}>{o.number}</Link> · {formatPrice(o.totalCents, o.currency)}
+                      </div>
+                    ))}
+              </dd>
             </dl>
           </section>
 

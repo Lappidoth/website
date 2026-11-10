@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AddToBasket } from "@/components/AddToBasket";
 import { ProductCard } from "@/components/ProductCard";
-import { WaitlistForm } from "@/components/WaitlistForm";
-import { formatPrice, getProduct, getProducts } from "@/lib/products";
+import { formatPrice } from "@/lib/format";
+import { getProduct, getProducts } from "@/lib/products";
+import { SHOP } from "@/lib/shop-config";
+import presenceInk from "../../../../../public/brand/script-presence-collection-ink.png";
 
 export const revalidate = 300;
 
@@ -29,10 +32,29 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
   const product = await getProduct(slug);
   if (!product) notFound();
 
-  const others = (await getProducts()).filter((p) => p.slug !== product.slug);
+  const candles = await getProducts("CANDLE");
+  const isSet = product.type === "SET";
+  const others = isSet ? candles : candles.filter((p) => p.slug !== product.slug);
+  const hasNotes = product.topNotes || product.heartNotes || product.baseNotes;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: `${product.tagline} ${product.description}`,
+    image: product.image,
+    brand: { "@type": "Brand", name: "Lappidoth & Co." },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: product.currency,
+      price: (product.priceCents / 100).toFixed(2),
+      availability: product.stock === 0 ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+    },
+  };
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="container">
         <p className="breadcrumb">
           <Link href="/shop">Shop</Link> &nbsp;/&nbsp; {product.name}
@@ -41,55 +63,76 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
           <div className="media">
             <Image
               src={product.image}
-              alt={`${product.name} candle from ${product.collection.name}`}
+              alt={`${product.name} — ${product.collection.name}`}
               fill
               priority
               sizes="(max-width: 860px) 100vw, 55vw"
             />
           </div>
           <div className="info">
-            <div style={{ display: "grid", gap: "0.75rem" }}>
+            <div style={{ display: "grid", gap: "0.5rem" }}>
               <h1>{product.name}</h1>
-              <p className="collection-name">{product.collection.name}</p>
+              <p className="collection-name">
+                <Image src={presenceInk} alt={product.collection.name} sizes="300px" />
+              </p>
             </div>
             <p className="price">{formatPrice(product.priceCents, product.currency)}</p>
-            <p className="desc">
-              <em>{product.tagline}</em> {product.description}
-            </p>
-
-            <dl className="notes-table" style={{ margin: 0 }}>
-              <div>
-                <dt>Top</dt>
-                <dd>{product.topNotes}</dd>
-              </div>
-              <div>
-                <dt>Heart</dt>
-                <dd>{product.heartNotes}</dd>
-              </div>
-              <div>
-                <dt>Base</dt>
-                <dd>{product.baseNotes}</dd>
-              </div>
-            </dl>
-
-            <div className="spec-label" aria-label="Specifications">
-              <div>
-                Burn time<strong>{product.burnTime}</strong>
-              </div>
-              <div>
-                Net weight<strong>{product.netWeight}</strong>
-              </div>
-              <div>
-                Wax<strong>{product.wax}</strong>
-              </div>
+            <div style={{ display: "grid", gap: "0.75rem" }}>
+              <p className="lead">{product.tagline}</p>
+              <p className="desc">{product.description}</p>
             </div>
 
-            <div className="waitlist-box">
-              <p className="eyebrow" style={{ color: "var(--ink)" }}>
-                Online ordering opens soon
-              </p>
-              <p>Leave your email and we&apos;ll let you know the moment {product.name} is available.</p>
-              <WaitlistForm productSlug={product.slug} />
+            {hasNotes && (
+              <dl className="notes-table">
+                <div><dt>Top</dt><dd>{product.topNotes ?? "—"}</dd></div>
+                <div><dt>Heart</dt><dd>{product.heartNotes ?? "—"}</dd></div>
+                <div><dt>Base</dt><dd>{product.baseNotes ?? "—"}</dd></div>
+              </dl>
+            )}
+
+            <AddToBasket
+              product={product}
+              candles={candles.map((c) => ({ slug: c.slug, name: c.name }))}
+            />
+
+            <div className="spec-label" aria-label="Specifications">
+              <div>Burn time<strong>{product.burnTime}</strong></div>
+              <div>Net weight<strong>{isSet ? `${product.setSize} × 5 oz` : product.netWeight}</strong></div>
+              <div>Wax<strong>{product.wax}</strong></div>
+            </div>
+
+            <div className="details">
+              <details>
+                <summary>Delivery &amp; returns</summary>
+                <div>
+                  <p>
+                    UK delivery from {formatPrice(SHOP.shippingOptions[0].amountCents)}, complimentary
+                    on orders over {formatPrice(SHOP.freeShippingThresholdCents)}. Dispatched within 1–3
+                    working days. International delivery by arrangement —{" "}
+                    <Link href="/contact">get in touch</Link>.
+                  </p>
+                  <p>
+                    <Link href="/delivery-returns">Read our delivery &amp; returns policy</Link>
+                  </p>
+                </div>
+              </details>
+              <details>
+                <summary>Candle care</summary>
+                <div>
+                  <p>On the first light, burn for 2–3 hours until the melt pool reaches the edge of the glass.</p>
+                  <p>Trim the wick to 5 mm before every burn. Burn for no more than 4 hours at a time.</p>
+                </div>
+              </details>
+              <details>
+                <summary>Safety</summary>
+                <div>
+                  <p>
+                    Never leave a burning candle unattended. Keep out of reach of children and pets.
+                    Burn on a heat-resistant surface away from draughts and anything flammable.
+                    Stop use when 1 cm of wax remains.
+                  </p>
+                </div>
+              </details>
             </div>
           </div>
         </article>
@@ -99,8 +142,8 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
         <section className="section bg-linen">
           <div className="container">
             <div className="section-head">
-              <p className="eyebrow">Complete the collection</p>
-              <h2>You may also love</h2>
+              <p className="eyebrow">{isSet ? "In the collection" : "Complete the collection"}</p>
+              <h2>{isSet ? "Choose from" : "You may also love"}</h2>
             </div>
             <div className="product-grid">
               {others.map((p) => (

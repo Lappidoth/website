@@ -171,7 +171,7 @@ export async function joinWaitlist(data: z.infer<typeof waitlistSchema>) {
 
 export async function getDashboardStats() {
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  const [total, subscribers, newThisMonth, openEnquiries, byStatus, recent] = await Promise.all([
+  const [total, subscribers, newThisMonth, openEnquiries, byStatus, recent, revenue, toDispatch] = await Promise.all([
     db.customer.count({ where: { status: { not: "ARCHIVED" } } }),
     db.customer.count({ where: { marketingOptIn: true } }),
     db.customer.count({ where: { createdAt: { gte: since } } }),
@@ -182,8 +182,24 @@ export async function getDashboardStats() {
       take: 10,
       include: { customer: true },
     }),
+    db.order.aggregate({
+      where: { status: { in: ["PAID", "DISPATCHED"] }, paidAt: { gte: since } },
+      _sum: { totalCents: true },
+      _count: true,
+    }),
+    db.order.count({ where: { status: "PAID" } }),
   ]);
-  return { total, subscribers, newThisMonth, openEnquiries, byStatus, recent };
+  return {
+    total,
+    subscribers,
+    newThisMonth,
+    openEnquiries,
+    byStatus,
+    recent,
+    revenueCents: revenue._sum.totalCents ?? 0,
+    ordersThisMonth: revenue._count,
+    toDispatch,
+  };
 }
 
 export async function listCustomers(opts: { q?: string; status?: string }) {

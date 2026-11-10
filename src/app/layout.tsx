@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Montserrat, Mr_Dafoe } from "next/font/google";
+import { Herr_Von_Muellerhoff, Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
@@ -15,8 +15,8 @@ const montserrat = Montserrat({
   weight: ["300", "400", "500", "600"],
 });
 
-const dafoe = Mr_Dafoe({
-  variable: "--font-dafoe",
+const script = Herr_Von_Muellerhoff({
+  variable: "--font-script-face",
   subsets: ["latin"],
   weight: "400",
 });
@@ -28,20 +28,21 @@ export const metadata: Metadata = {
     template: "%s · Lappidoth & Co.",
   },
   description:
-    "Hand-poured natural soy candles, crafted with intention to shape atmosphere. Discover The Presence Collection.",
+    "Hand-poured 100% natural soy wax candles, mindfully crafted in small batches in the UK. Discover The Presence Collection.",
   openGraph: {
     siteName: "Lappidoth & Co.",
+    locale: "en_GB",
     images: ["/images/hero-presence-collection.jpg"],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#e6e0d5",
+  themeColor: "#f7f6f0",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${montserrat.variable} ${dafoe.variable}`}>
+    <html lang="en-GB" className={`${playfair.variable} ${montserrat.variable} ${script.variable}`}>
       <body>{children}</body>
     </html>
   );
