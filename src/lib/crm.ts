@@ -210,9 +210,9 @@ export async function listCustomers(opts: { q?: string; status?: string }) {
       ...(q
         ? {
             OR: [
-              { email: { contains: q } },
-              { firstName: { contains: q } },
-              { lastName: { contains: q } },
+              { email: { contains: q, mode: "insensitive" } },
+              { firstName: { contains: q, mode: "insensitive" } },
+              { lastName: { contains: q, mode: "insensitive" } },
             ],
           }
         : {}),

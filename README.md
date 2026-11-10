@@ -11,18 +11,37 @@ newsletter signup, contact enquiry and product waitlist in one customer database
   `provider` in `prisma/schema.prisma` and pointing `DATABASE_URL` at your database.
 - **zod** validates everything that comes in from the browser
 
-## Getting started
+## Getting started (local)
+
+You need Node 22+ and a PostgreSQL database.
 
 ```bash
 npm install
-cp .env.example .env      # then set ADMIN_PASSWORD
-npm run setup             # creates the database and seeds the products
+cp .env.example .env      # set DATABASE_URL, DATABASE_URL_UNPOOLED and ADMIN_PASSWORD
+npm run setup             # applies migrations and seeds the products
 npm run dev
 ```
 
 - Website: http://localhost:3000
-- CRM: http://localhost:3000/admin (log in with `ADMIN_USER` / `ADMIN_PASSWORD`)
+- Back office: http://localhost:3000/admin (log in with `ADMIN_USER` / `ADMIN_PASSWORD`)
 - Browse raw data: `npm run db:studio`
+- Changing the data model: edit `prisma/schema.prisma`, then `npm run db:migrate -- --name what-changed`
+
+## Deploying (Vercel + Neon)
+
+On Vercel, `npm run vercel-build` runs automatically: it applies database migrations, refreshes
+the product catalogue from `prisma/seed.ts`, then builds the site. Products, prices and
+descriptions therefore live in `prisma/seed.ts`. Edit them there and push.
+
+Environment variables to set in Vercel (Project → Settings → Environment Variables):
+
+| Name | Value |
+|---|---|
+| `DATABASE_URL`, `DATABASE_URL_UNPOOLED` | Set automatically by the Neon integration |
+| `ADMIN_USER`, `ADMIN_PASSWORD` | Back-office login. Use a long, unique password |
+| `STRIPE_SECRET_KEY` | `sk_test_…` while testing, `sk_live_…` to take real payments |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_…` from the Stripe webhook endpoint |
+| `NEXT_PUBLIC_SITE_URL` | `https://lappidothandco.com` once the domain is connected |
 
 ## Payments (Stripe)
 

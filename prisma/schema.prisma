@@ -1,14 +1,16 @@
-// Lappidoth & Co. — data model
-// SQLite for local development. For production, change `provider` to
-// "postgresql" and point DATABASE_URL at a hosted Postgres database.
+// Lappidoth & Co. — data model (PostgreSQL)
+// DATABASE_URL: pooled connection used by the app.
+// DATABASE_URL_UNPOOLED: direct connection used for migrations.
+// (These are the names Neon's Vercel integration sets automatically.)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 // ─── Catalogue ────────────────────────────────────────────────────────────

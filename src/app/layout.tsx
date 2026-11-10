@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Herr_Von_Muellerhoff, Montserrat, Playfair_Display } from "next/font/google";
+import { siteUrl } from "@/lib/stripe";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -22,7 +23,7 @@ const script = Herr_Von_Muellerhoff({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl()),
   title: {
     default: "Lappidoth & Co. — Fragrance to Fire",
     template: "%s · Lappidoth & Co.",
