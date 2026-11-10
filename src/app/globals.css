@@ -12,7 +12,7 @@
   --ink: #2a2623;
   --ink-soft: #5e5751;
   --gold: #d9a354;       /* script on charcoal */
-  --honey: #e8c25c;      /* founder quote panel (mockup used #f9d02a) */
+  --mustard: #d4a12c;    /* founder quote panel — the brand's signature mustard */
   --ember: #8a4b3e;
   --line: rgba(42, 38, 35, 0.16);
   --line-light: rgba(247, 246, 240, 0.18);
@@ -526,6 +526,11 @@ button {
   justify-items: center;
 }
 
+.product-card .name-art {
+  height: clamp(1.7rem, 2.6vw, 2.2rem);
+  width: auto;
+}
+
 .product-card h3 {
   font-family: var(--font-sans);
   font-size: clamp(1.4rem, 2.2vw, 1.85rem);
@@ -640,7 +645,7 @@ button {
 /* ─── Founder quote ────────────────────────────────────────────────────── */
 
 .quote-band {
-  background: var(--honey);
+  background: var(--mustard);
   color: var(--ink);
 }
 
@@ -920,6 +925,59 @@ button {
   gap: 1.75rem;
 }
 
+.pdp h1 img {
+  height: clamp(2.6rem, 5.5vw, 4.2rem);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left;
+}
+
+.gallery {
+  position: sticky;
+  top: calc(var(--header-h) + 1.5rem);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.gallery .media {
+  position: relative;
+  top: 0;
+}
+
+.gallery .media[data-kind="label"] {
+  background: #fff;
+}
+
+.gallery .media[data-kind="label"] img {
+  object-fit: contain;
+  padding: 6%;
+}
+
+.thumbs {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.thumbs button {
+  position: relative;
+  width: 76px;
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  padding: 0;
+  background: #fff;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.thumbs button[aria-pressed="true"] {
+  border-color: var(--ink);
+}
+
+.thumbs img {
+  object-fit: cover;
+}
+
 .pdp h1 {
   font-family: var(--font-sans);
   font-size: clamp(2.4rem, 5vw, 3.8rem);
@@ -1031,7 +1089,7 @@ button {
 
 @media (max-width: 860px) {
   .pdp { grid-template-columns: 1fr; }
-  .pdp .media { position: relative; top: 0; }
+  .pdp .media, .gallery { position: relative; top: 0; }
 }
 
 /* ─── Basket drawer ────────────────────────────────────────────────────── */

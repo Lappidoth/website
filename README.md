@@ -36,7 +36,7 @@ npm run dev
    `checkout.session.async_payment_succeeded` and `checkout.session.expired`.
 
 Prices always come from the database. The browser only sends product slugs and quantities.
-Delivery rates and the free-delivery threshold are set in `src/lib/shop-config.ts`.
+Delivery (standard £4.99, express £5.99, free over £50) is set in `src/lib/shop-config.ts`.
 
 ## Project layout
 

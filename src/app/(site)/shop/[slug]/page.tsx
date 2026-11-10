@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToBasket } from "@/components/AddToBasket";
+import { ProductGallery } from "@/components/ProductGallery";
+import { CANDLE_ART } from "@/lib/brand-assets";
 import { ProductCard } from "@/components/ProductCard";
 import { formatPrice } from "@/lib/format";
 import { getProduct, getProducts } from "@/lib/products";
@@ -35,6 +37,7 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
   const candles = await getProducts("CANDLE");
   const isSet = product.type === "SET";
   const others = isSet ? candles : candles.filter((p) => p.slug !== product.slug);
+  const art = CANDLE_ART[product.slug];
   const hasNotes = product.topNotes || product.heartNotes || product.baseNotes;
 
   const jsonLd = {
@@ -60,18 +63,15 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
           <Link href="/shop">Shop</Link> &nbsp;/&nbsp; {product.name}
         </p>
         <article className="pdp">
-          <div className="media">
-            <Image
-              src={product.image}
-              alt={`${product.name} — ${product.collection.name}`}
-              fill
-              priority
-              sizes="(max-width: 860px) 100vw, 55vw"
-            />
-          </div>
+          <ProductGallery
+            shots={[
+              { src: product.image, alt: `${product.name} — ${product.collection.name}`, kind: "photo" },
+              ...(art ? [{ src: art.label, alt: `The ${product.name} label`, kind: "label" as const }] : []),
+            ]}
+          />
           <div className="info">
             <div style={{ display: "grid", gap: "0.5rem" }}>
-              <h1>{product.name}</h1>
+              <h1>{art ? <Image src={art.nameInk} alt={product.name} priority sizes="420px" /> : product.name}</h1>
               <p className="collection-name">
                 <Image src={presenceInk} alt={product.collection.name} sizes="300px" />
               </p>

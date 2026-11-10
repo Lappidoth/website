@@ -74,7 +74,7 @@ export default async function Home() {
           </div>
           <div className="product-grid">
             {candles.map((p, i) => (
-              <ProductCard key={p.id} product={p} priority={i === 0} />
+              <ProductCard key={p.id} product={p} priority={i === 0} tone="cream" />
             ))}
           </div>
           <div style={{ textAlign: "center", marginTop: "3.5rem" }}>

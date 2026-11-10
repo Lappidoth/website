@@ -1,6 +1,6 @@
 /**
- * Shop settings in one place. Delivery prices are placeholders — confirm
- * your Royal Mail / courier rates and update here.
+ * Shop settings in one place: delivery prices, free-delivery threshold and
+ * contact details.
  */
 export const SHOP = {
   currency: "GBP",
@@ -9,8 +9,8 @@ export const SHOP = {
   shipToCountries: ["GB"] as const,
   freeShippingThresholdCents: 5000, // free standard delivery over £50
   shippingOptions: [
-    { id: "standard", name: "Standard UK delivery (2–4 working days)", amountCents: 395, minDays: 2, maxDays: 4 },
-    { id: "express", name: "Express UK delivery (1–2 working days)", amountCents: 595, minDays: 1, maxDays: 2 },
+    { id: "standard", name: "Standard UK delivery (2–4 working days)", amountCents: 499, minDays: 2, maxDays: 4 },
+    { id: "express", name: "Express UK delivery (1–2 working days)", amountCents: 599, minDays: 1, maxDays: 2 },
   ],
   contact: {
     email: "hello@lappidothandco.com",
