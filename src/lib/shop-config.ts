@@ -7,7 +7,7 @@ export const SHOP = {
   locale: "en-GB",
   // UK only for now. Add ISO country codes (e.g. "IE", "FR", "US") to ship abroad.
   shipToCountries: ["GB"] as const,
-  freeShippingThresholdCents: 5000, // free standard delivery over £50
+  freeShippingThresholdCents: 7000, // free standard delivery over £70
   shippingOptions: [
     { id: "standard", name: "Standard UK delivery (2–4 working days)", amountCents: 499, minDays: 2, maxDays: 4 },
     { id: "express", name: "Express UK delivery (1–2 working days)", amountCents: 599, minDays: 1, maxDays: 2 },

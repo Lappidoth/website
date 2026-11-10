@@ -12,8 +12,9 @@ import { getStripe, siteUrl } from "./stripe";
 import type { PricedLine } from "./basket";
 
 async function nextOrderNumber() {
-  const count = await db.order.count();
-  return `LC-${1001 + count}`;
+  const last = await db.order.findFirst({ orderBy: { createdAt: "desc" }, select: { number: true } });
+  const n = last ? parseInt(last.number.replace(/\D/g, ""), 10) : 1000;
+  return `LC-${(Number.isFinite(n) ? n : 1000) + 1}`;
 }
 
 export async function createCheckout(
@@ -46,44 +47,51 @@ export async function createCheckout(
   const publicImages = base.startsWith("https://");
   const freeShipping = priced.subtotalCents >= SHOP.freeShippingThresholdCents;
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    currency: SHOP.currency.toLowerCase(),
-    client_reference_id: order.id,
-    metadata: { orderId: order.id, orderNumber: order.number },
-    payment_intent_data: { metadata: { orderId: order.id, orderNumber: order.number } },
-    line_items: priced.lines.map((l) => ({
-      quantity: l.quantity,
-      price_data: {
-        currency: SHOP.currency.toLowerCase(),
-        unit_amount: l.unitPriceCents,
-        product_data: {
-          name: l.name,
-          ...(l.options ? { description: l.options } : {}),
-          ...(publicImages ? { images: [`${base}${l.image}`] } : {}),
-        },
-      },
-    })),
-    shipping_address_collection: { allowed_countries: [...SHOP.shipToCountries] },
-    shipping_options: SHOP.shippingOptions.map((opt, i) => {
-      const amount = i === 0 && freeShipping ? 0 : opt.amountCents;
-      return {
-        shipping_rate_data: {
-          type: "fixed_amount" as const,
-          display_name: amount === 0 ? `${opt.name} — complimentary` : opt.name,
-          fixed_amount: { amount, currency: SHOP.currency.toLowerCase() },
-          delivery_estimate: {
-            minimum: { unit: "business_day" as const, value: opt.minDays },
-            maximum: { unit: "business_day" as const, value: opt.maxDays },
+  let session;
+  try {
+    session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      currency: SHOP.currency.toLowerCase(),
+      client_reference_id: order.id,
+      metadata: { orderId: order.id, orderNumber: order.number },
+      payment_intent_data: { metadata: { orderId: order.id, orderNumber: order.number } },
+      line_items: priced.lines.map((l) => ({
+        quantity: l.quantity,
+        price_data: {
+          currency: SHOP.currency.toLowerCase(),
+          unit_amount: l.unitPriceCents,
+          product_data: {
+            name: l.name,
+            ...(l.options ? { description: l.options } : {}),
+            ...(publicImages ? { images: [`${base}${l.image}`] } : {}),
           },
         },
-      };
-    }),
-    phone_number_collection: { enabled: true },
-    allow_promotion_codes: true,
-    success_url: `${base}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${base}/basket`,
-  });
+      })),
+      shipping_address_collection: { allowed_countries: [...SHOP.shipToCountries] },
+      shipping_options: SHOP.shippingOptions.map((opt, i) => {
+        const amount = i === 0 && freeShipping ? 0 : opt.amountCents;
+        return {
+          shipping_rate_data: {
+            type: "fixed_amount" as const,
+            display_name: amount === 0 ? `${opt.name} — complimentary` : opt.name,
+            fixed_amount: { amount, currency: SHOP.currency.toLowerCase() },
+            delivery_estimate: {
+              minimum: { unit: "business_day" as const, value: opt.minDays },
+              maximum: { unit: "business_day" as const, value: opt.maxDays },
+            },
+          },
+        };
+      }),
+      phone_number_collection: { enabled: true },
+      allow_promotion_codes: true,
+      success_url: `${base}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${base}/basket`,
+    });
+  } catch (err) {
+    // Don't leave an orphaned "awaiting payment" order behind
+    await db.order.delete({ where: { id: order.id } }).catch(() => {});
+    throw err;
+  }
 
   await db.order.update({ where: { id: order.id }, data: { checkoutRef: session.id } });
   return session.url;
