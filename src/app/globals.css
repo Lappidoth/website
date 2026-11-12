@@ -547,6 +547,19 @@ button {
 
 .bg-dark .product-card .tagline { color: rgba(247, 246, 240, 0.78); }
 
+.product-card .scent {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  max-width: 30ch;
+}
+
+.bg-dark .product-card .scent {
+  color: var(--gold);
+}
+
 .product-card .price {
   font-size: 0.82rem;
   letter-spacing: 0.16em;
@@ -1001,6 +1014,41 @@ button {
 }
 
 .pdp .desc { color: var(--ink-soft); }
+
+.scent-line {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.scent-line p {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+}
+
+.story {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.5rem 1.75rem;
+  background: var(--linen);
+  border-left: 3px solid var(--mustard);
+}
+
+.story .eyebrow {
+  color: var(--ink);
+}
+
+.story p:not(.eyebrow) {
+  color: var(--ink-soft);
+}
+
+.story .inspiration {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+}
 
 .notes-table {
   display: grid;

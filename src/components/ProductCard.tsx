@@ -4,7 +4,15 @@ import { CANDLE_ART } from "@/lib/brand-assets";
 import { formatPrice } from "@/lib/format";
 
 type Props = {
-  product: { slug: string; name: string; image: string; tagline: string; priceCents: number; stock: number | null };
+  product: {
+    slug: string;
+    name: string;
+    image: string;
+    tagline: string;
+    scent?: string | null;
+    priceCents: number;
+    stock: number | null;
+  };
   priority?: boolean;
   showTagline?: boolean;
   /** "cream" for use on the charcoal background */
@@ -39,6 +47,7 @@ export function ProductCard({ product, priority, showTagline = true, tone = "ink
           )}
         </h3>
         {showTagline && <p className="tagline">{product.tagline}</p>}
+        {product.scent && <p className="scent">{product.scent}</p>}
         <p className="price">{formatPrice(product.priceCents)}</p>
       </div>
     </Link>

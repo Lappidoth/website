@@ -24,7 +24,9 @@ export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promis
   if (!product) return {};
   return {
     title: product.name,
-    description: `${product.tagline} ${product.description}`,
+    description: [product.tagline, product.scent && `Scent: ${product.scent}.`, product.description]
+      .filter(Boolean)
+      .join(" "),
     openGraph: { images: [product.image] },
   };
 }
@@ -44,7 +46,7 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    description: `${product.tagline} ${product.description}`,
+    description: [product.tagline, product.scent, product.description].filter(Boolean).join(". "),
     image: product.image,
     brand: { "@type": "Brand", name: "Lappidoth & Co." },
     offers: {
@@ -77,10 +79,24 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
               </p>
             </div>
             <p className="price">{formatPrice(product.priceCents, product.currency)}</p>
-            <div style={{ display: "grid", gap: "0.75rem" }}>
-              <p className="lead">{product.tagline}</p>
+            <p className="lead">{product.tagline}</p>
+
+            {product.scent && (
+              <div className="scent-line">
+                <span className="eyebrow">Scent</span>
+                <p>{product.scent}</p>
+              </div>
+            )}
+
+            {product.theme ? (
+              <div className="story">
+                <p className="eyebrow">The story · {product.theme}</p>
+                <p>{product.description}</p>
+                {product.inspiration && <p className="inspiration">{product.inspiration}</p>}
+              </div>
+            ) : (
               <p className="desc">{product.description}</p>
-            </div>
+            )}
 
             {hasNotes && (
               <dl className="notes-table">

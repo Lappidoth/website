@@ -34,6 +34,10 @@ model Product {
   setSize      Int?
   tagline      String
   description  String
+  // The candle's story: a one-word theme, its scent and what inspired it
+  theme        String?
+  scent        String?
+  inspiration  String?
   // Optional fragrance notes — shown only when filled in
   topNotes     String?
   heartNotes   String?
