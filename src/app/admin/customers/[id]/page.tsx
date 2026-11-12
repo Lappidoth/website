@@ -4,7 +4,7 @@ import { connection } from "next/server";
 import { CUSTOMER_STATUSES, getCustomer } from "@/lib/crm";
 import { formatPrice } from "@/lib/format";
 import { TYPE_LABELS, fmtDate, fullName } from "../../format";
-import { addNote, updateCustomer } from "./actions";
+import { addNote, deleteCustomer, updateCustomer } from "./actions";
 
 export default async function CustomerPage(props: PageProps<"/admin/customers/[id]">) {
   await connection();
@@ -69,6 +69,20 @@ export default async function CustomerPage(props: PageProps<"/admin/customers/[i
               <button className="btn btn-solid" type="submit">
                 Save
               </button>
+            </form>
+          </section>
+
+          <section className="panel danger">
+            <h2>Delete customer</h2>
+            <form action={deleteCustomer.bind(null, c.id)} className="admin-form">
+              <p className="muted" style={{ fontSize: "0.85rem" }}>
+                Permanently removes this person and their timeline (useful for test data or if someone asks
+                you to delete their details). Their orders stay in your records for accounting.
+              </p>
+              <label className="confirm-check">
+                <input type="checkbox" name="confirm" value="yes" required /> Yes, delete {c.email}
+              </label>
+              <button className="btn btn-danger" type="submit">Delete permanently</button>
             </form>
           </section>
         </div>

@@ -4,7 +4,7 @@ import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 import { ORDER_STATUSES, ORDER_STATUS_LABELS, fmtAddress, fmtDate } from "../../format";
-import { markDispatched, setOrderStatus } from "./actions";
+import { deleteOrder, markDispatched, setOrderStatus } from "./actions";
 
 export default async function OrderPage(props: PageProps<"/admin/orders/[id]">) {
   await connection();
@@ -71,6 +71,25 @@ export default async function OrderPage(props: PageProps<"/admin/orders/[id]">) 
                 Refunds are issued in Stripe; then set the status here to Refunded.
               </p>
             </form>
+          </section>
+
+          <section className="panel danger">
+            <h2>Delete order</h2>
+            {o.status === "CANCELLED" || o.status === "REFUNDED" ? (
+              <form action={deleteOrder.bind(null, o.id)} className="admin-form">
+                <p className="muted" style={{ fontSize: "0.85rem" }}>
+                  Permanently removes this order. This can&apos;t be undone.
+                </p>
+                <label className="confirm-check">
+                  <input type="checkbox" name="confirm" value="yes" required /> Yes, delete order {o.number}
+                </label>
+                <button className="btn btn-danger" type="submit">Delete permanently</button>
+              </form>
+            ) : (
+              <p className="muted" style={{ fontSize: "0.85rem" }}>
+                To delete an order (for example a test order), first set its status to Cancelled or Refunded above.
+              </p>
+            )}
           </section>
         </div>
 

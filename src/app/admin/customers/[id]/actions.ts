@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { CUSTOMER_STATUSES, logInteraction } from "@/lib/crm";
 import { db } from "@/lib/db";
@@ -50,4 +51,17 @@ export async function updateCustomer(customerId: string, formData: FormData) {
     },
   });
   revalidatePath(`/admin/customers/${customerId}`);
+}
+
+/**
+ * Permanently delete a customer and their timeline (e.g. test data, or a
+ * UK GDPR erasure request). Their orders are kept for your accounts but are
+ * no longer linked to a profile.
+ */
+export async function deleteCustomer(customerId: string, formData: FormData) {
+  if (formData.get("confirm") !== "yes") return;
+  await db.customer.deleteMany({ where: { id: customerId } });
+  revalidatePath("/admin/customers");
+  revalidatePath("/admin");
+  redirect("/admin/customers");
 }

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/db";
 
@@ -21,4 +22,19 @@ export async function setOrderStatus(orderId: string, formData: FormData) {
   await db.order.update({ where: { id: orderId }, data: { status } });
   revalidatePath(`/admin/orders/${orderId}`);
   revalidatePath("/admin/orders");
+}
+
+/**
+ * Permanently delete an order. Only allowed once it's Cancelled or Refunded,
+ * so a live, paid order can't be removed by accident.
+ */
+export async function deleteOrder(orderId: string, formData: FormData) {
+  if (formData.get("confirm") !== "yes") return;
+  const deleted = await db.order.deleteMany({
+    where: { id: orderId, status: { in: ["CANCELLED", "REFUNDED"] } },
+  });
+  if (deleted.count === 0) return;
+  revalidatePath("/admin/orders");
+  revalidatePath("/admin");
+  redirect("/admin/orders");
 }

@@ -283,3 +283,28 @@
     grid-template-columns: 1fr;
   }
 }
+
+.panel.danger {
+  border-color: rgba(138, 75, 62, 0.35);
+}
+
+.panel.danger h2 {
+  color: var(--ember);
+}
+
+.confirm-check {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.btn-danger {
+  border-color: var(--ember);
+  color: var(--ember);
+}
+
+.btn-danger:hover {
+  background: var(--ember);
+  color: #fff;
+}
