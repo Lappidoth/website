@@ -52,7 +52,8 @@ Environment variables to set in Vercel (Project → Settings → Environment Var
 3. Pay with test card `4242 4242 4242 4242`, any future expiry date and any CVC.
 4. In production, add a webhook endpoint in the Stripe Dashboard pointing at
    `https://<your-domain>/api/stripe/webhook` for `checkout.session.completed`,
-   `checkout.session.async_payment_succeeded` and `checkout.session.expired`.
+   `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`
+   and `checkout.session.expired`. Choose the **Snapshot** payload style.
 
 Prices always come from the database. The browser only sends product slugs and quantities.
 Delivery (standard £4.99, express £5.99, free over £70) is set in `src/lib/shop-config.ts`.

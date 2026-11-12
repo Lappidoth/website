@@ -6,6 +6,7 @@ import { cancelCheckoutSession, fulfilCheckoutSession } from "@/lib/orders";
  * https://<your-domain>/api/stripe/webhook listening for:
  *   checkout.session.completed
  *   checkout.session.async_payment_succeeded
+ *   checkout.session.async_payment_failed
  *   checkout.session.expired
  * and put its signing secret in STRIPE_WEBHOOK_SECRET.
  */
@@ -29,6 +30,7 @@ export async function POST(req: Request) {
     case "checkout.session.async_payment_succeeded":
       await fulfilCheckoutSession(event.data.object);
       break;
+    case "checkout.session.async_payment_failed":
     case "checkout.session.expired":
       await cancelCheckoutSession(event.data.object);
       break;
