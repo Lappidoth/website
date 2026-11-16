@@ -6,6 +6,7 @@ import { formatPrice } from "@/lib/format";
 import { ORDER_STATUSES, ORDER_STATUS_LABELS, fmtAddress, fmtDate } from "../../format";
 import { deleteOrder, markDispatched, setOrderStatus } from "./actions";
 import { requireAdmin } from "@/lib/admin-auth";
+import { emailConfigured } from "@/lib/email";
 
 export default async function OrderPage(props: PageProps<"/admin/orders/[id]">) {
   await connection();
@@ -63,7 +64,17 @@ export default async function OrderPage(props: PageProps<"/admin/orders/[id]">) 
               <form action={markDispatched.bind(null, o.id)} className="admin-form">
                 <label className="muted" htmlFor="tracking">Tracking number (optional)</label>
                 <input id="tracking" name="tracking" />
+                {emailConfigured() && o.email ? (
+                  <label className="confirm-check">
+                    <input type="checkbox" name="notify" value="no" /> Don&apos;t email the customer
+                  </label>
+                ) : null}
                 <button className="btn btn-solid" type="submit">Mark as dispatched</button>
+                <p className="muted" style={{ fontSize: "0.8rem" }}>
+                  {emailConfigured() && o.email
+                    ? `${o.email} will be emailed that the order is on its way, with the tracking number.`
+                    : "The customer is not emailed automatically yet."}
+                </p>
               </form>
             </section>
           )}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { ClearBasket } from "@/components/ClearBasket";
 import { db } from "@/lib/db";
+import { emailConfigured } from "@/lib/email";
 import { formatPrice } from "@/lib/format";
 import { fulfilCheckoutSession } from "@/lib/orders";
 import { SHOP } from "@/lib/shop-config";
@@ -36,7 +37,10 @@ export default async function SuccessPage(props: PageProps<"/checkout/success">)
       {order ? (
         <>
           <p>
-            Your order <strong>{order.number}</strong> is confirmed — please keep this number for your records.
+            Your order <strong>{order.number}</strong> is confirmed
+            {emailConfigured() && order.email
+              ? `. We've emailed your confirmation to ${order.email}.`
+              : " — please keep this number for your records."}
           </p>
           <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: "0.4rem" }}>
             {order.items.map((i) => (

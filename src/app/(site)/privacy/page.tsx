@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <PolicyPage title="Privacy Policy" updated="November 2026">
       <p>
-        {SHOP.company.name} (company number {SHOP.company.number}, {SHOP.company.address.join(", ")}) is the
+        {SHOP.company.name} (company number {SHOP.company.number}, {SHOP.company.tradingAddress.join(", ")}) is the
         data controller for the personal information you share with us. We handle it in line with UK GDPR
         and the Data Protection Act 2018.
       </p>

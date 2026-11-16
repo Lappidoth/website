@@ -43,7 +43,8 @@ Environment variables to set in Vercel (Project → Settings → Environment Var
 | `ADMIN_USER`, `ADMIN_PASSWORD` | Back-office login. Use a long, unique password |
 | `STRIPE_SECRET_KEY` | `sk_test_…` while testing, `sk_live_…` to take real payments |
 | `STRIPE_WEBHOOK_SECRET` | `whsec_…` from the Stripe webhook endpoint |
-| `NEXT_PUBLIC_SITE_URL` | `https://lappidothandco.com` once the domain is connected |
+| `NEXT_PUBLIC_SITE_URL` | `https://www.lappidothandco.com` |
+| `RESEND_API_KEY` | From resend.com. Turns on emails: order confirmation, dispatch notice, and alerts to the shop for new orders and contact-form messages (`src/lib/email.ts`). Nothing is sent without it |
 
 ## Payments (Stripe)
 
@@ -100,7 +101,6 @@ Admins can add notes, tags and phone numbers, and export everyone to CSV.
 
 The schema and service layer are designed so these can be added without restructuring:
 
-- **Order emails:** branded confirmation and dispatch emails (e.g. via Resend).
 - **Revolut Pay:** a second provider can be added in `lib/orders.ts`. Orders already record `paymentProvider`.
 - **Email marketing:** sync opted-in customers to Klaviyo/Mailchimp from `lib/crm.ts`.
 - **Notifications:** email the team on new contact-form enquiries (e.g. Resend).

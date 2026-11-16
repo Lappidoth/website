@@ -5,16 +5,21 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
+import { sendDispatchEmail } from "@/lib/email";
 
 // Every action re-checks the login itself (see src/lib/admin-auth.ts).
 
 export async function markDispatched(orderId: string, formData: FormData) {
   await requireAdmin();
   const tracking = z.string().trim().max(80).optional().parse(formData.get("tracking") ?? undefined);
-  await db.order.updateMany({
+  const updated = await db.order.updateMany({
     where: { id: orderId, status: "PAID" },
     data: { status: "DISPATCHED", dispatchedAt: new Date(), trackingNumber: tracking || null },
   });
+  if (updated.count === 1 && formData.get("notify") !== "no") {
+    const order = await db.order.findUnique({ where: { id: orderId }, include: { items: true } });
+    if (order) await sendDispatchEmail(order);
+  }
   revalidatePath(`/admin/orders/${orderId}`);
   revalidatePath("/admin/orders");
 }

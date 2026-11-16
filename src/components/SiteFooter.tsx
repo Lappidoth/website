@@ -46,8 +46,9 @@ export function SiteFooter() {
           <span>Hand-poured in small batches in the UK</span>
         </div>
         <p className="footer-legal">
-          {SHOP.company.name} is registered in {SHOP.company.registeredIn}, company number {SHOP.company.number}.{" "}
-          {SHOP.company.address.join(", ")}.
+          {SHOP.company.name} is registered in {SHOP.company.registeredIn}, company number {SHOP.company.number}.
+          {SHOP.company.registeredOffice.length > 0 && <> Registered office: {SHOP.company.registeredOffice.join(", ")}.</>}{" "}
+          Trading address: {SHOP.company.tradingAddress.join(", ")}.
         </p>
       </div>
     </footer>

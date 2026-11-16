@@ -6,6 +6,7 @@
 import type Stripe from "stripe";
 import { logInteraction, upsertCustomer } from "./crm";
 import { db } from "./db";
+import { sendOrderEmails } from "./email";
 import { formatPrice } from "./format";
 import { SHOP } from "./shop-config";
 import { getStripe, siteUrl } from "./stripe";
@@ -192,7 +193,11 @@ export async function fulfilCheckoutSession(session: Stripe.Checkout.Session) {
     });
   }
 
-  return db.order.findUnique({ where: { id: order.id } });
+  const paid = await db.order.findUnique({ where: { id: order.id }, include: { items: true } });
+  // Confirmation to the customer and an alert to the shop. Only the call that
+  // claimed the order gets here, so these are sent once.
+  if (paid) await sendOrderEmails(paid);
+  return paid;
 }
 
 export async function cancelCheckoutSession(session: Stripe.Checkout.Session) {

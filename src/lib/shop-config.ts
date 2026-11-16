@@ -18,10 +18,14 @@ export const SHOP = {
     phoneHref: "+447423229556",
   },
   company: {
-    name: "Lappidoth & Co.",
+    // Registered name as it appears on Companies House
+    name: "Lappidoth & Co. Ltd",
     number: "16886232",
     registeredIn: "England and Wales",
-    address: ["Bartle House", "Oxford Court", "Manchester", "M2 3WQ"],
+    tradingAddress: ["Bartle House", "Oxford Court", "Manchester", "M2 3WQ"],
+    // Registered office, if different from the trading address. UK law requires
+    // it on the website and in business emails; it shows wherever this is filled in.
+    registeredOffice: [] as string[],
   },
   maxQuantityPerLine: 20,
 };

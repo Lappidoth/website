@@ -7,6 +7,7 @@
  */
 import { z } from "zod";
 import { db } from "./db";
+import { sendEnquiryAlert } from "./email";
 
 export const CUSTOMER_STATUSES = ["LEAD", "SUBSCRIBER", "CUSTOMER", "VIP", "ARCHIVED"] as const;
 export type CustomerStatus = (typeof CUSTOMER_STATUSES)[number];
@@ -149,12 +150,25 @@ export async function submitContact(data: z.infer<typeof contactSchema>) {
     source: "contact",
     status: data.marketingOptIn ? "SUBSCRIBER" : "LEAD",
   });
-  await logInteraction({
+  const interaction = await logInteraction({
     customerId: customer.id,
     type: "CONTACT_FORM",
     subject: subject || "Website enquiry",
     body: message,
   });
+  // Let the shop know straight away (no-op until email is set up)
+  await sendEnquiryAlert(
+    {
+      customerId: customer.id,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      subject,
+      message,
+    },
+    interaction.id,
+  );
   return customer;
 }
 

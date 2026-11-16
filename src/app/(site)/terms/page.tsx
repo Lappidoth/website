@@ -13,15 +13,17 @@ export default function Page() {
         This website is operated by {SHOP.company.name}, a company registered in {SHOP.company.registeredIn}{" "}
         (company number {SHOP.company.number}).
       </p>
+      {SHOP.company.registeredOffice.length > 0 && (
+        <p>
+          <strong>Registered office</strong>
+          <br />
+          {SHOP.company.registeredOffice.join(", ")}
+        </p>
+      )}
       <p>
-        {SHOP.company.name}
+        <strong>Trading address</strong>
         <br />
-        {SHOP.company.address.map((line) => (
-          <span key={line}>
-            {line}
-            <br />
-          </span>
-        ))}
+        {SHOP.company.tradingAddress.join(", ")}
       </p>
       <p>
         Contact us at <a href={`mailto:${SHOP.contact.email}`}>{SHOP.contact.email}</a> or{" "}
