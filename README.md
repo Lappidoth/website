@@ -32,7 +32,7 @@ npm run dev
 On Vercel, `npm run vercel-build` runs automatically (see `scripts/vercel-build.sh`). On the
 live (production) deployment it applies database migrations, refreshes the product catalogue
 from `prisma/seed.ts`, then builds the site. Preview deployments only build — they never
-change the database. Server code runs in London (`vercel.json`), next to the database. Products, prices and
+change the database. Products, prices and
 descriptions therefore live in `prisma/seed.ts`. Edit them there and push.
 
 Environment variables to set in Vercel (Project → Settings → Environment Variables):
