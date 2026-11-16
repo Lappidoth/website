@@ -4,11 +4,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { CUSTOMER_STATUSES, logInteraction } from "@/lib/crm";
+import { requireAdmin } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 
-// Note: /admin/* (including these actions) is protected by src/proxy.ts.
+// Every action re-checks the login itself (see src/lib/admin-auth.ts).
 
 export async function addNote(customerId: string, formData: FormData) {
+  await requireAdmin();
   const body = z.string().trim().min(1).max(5000).safeParse(formData.get("body"));
   if (!body.success) return;
   await logInteraction({ customerId, type: "NOTE", body: body.data });
@@ -17,6 +19,7 @@ export async function addNote(customerId: string, formData: FormData) {
 }
 
 export async function updateCustomer(customerId: string, formData: FormData) {
+  await requireAdmin();
   const parsed = z
     .object({
       status: z.enum(CUSTOMER_STATUSES),
@@ -59,6 +62,7 @@ export async function updateCustomer(customerId: string, formData: FormData) {
  * no longer linked to a profile.
  */
 export async function deleteCustomer(customerId: string, formData: FormData) {
+  await requireAdmin();
   if (formData.get("confirm") !== "yes") return;
   await db.customer.deleteMany({ where: { id: customerId } });
   revalidatePath("/admin/customers");

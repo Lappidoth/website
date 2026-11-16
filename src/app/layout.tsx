@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: ["/images/hero-presence-collection.jpg"],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {

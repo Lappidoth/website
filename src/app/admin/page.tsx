@@ -3,9 +3,11 @@ import { connection } from "next/server";
 import { getDashboardStats } from "@/lib/crm";
 import { formatPrice } from "@/lib/format";
 import { TYPE_LABELS, fmtDate, fullName } from "./format";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export default async function AdminDashboard() {
   await connection();
+  await requireAdmin();
   const s = await getDashboardStats();
 
   return (

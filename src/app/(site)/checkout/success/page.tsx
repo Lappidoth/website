@@ -5,6 +5,7 @@ import { ClearBasket } from "@/components/ClearBasket";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 import { fulfilCheckoutSession } from "@/lib/orders";
+import { SHOP } from "@/lib/shop-config";
 import { getStripe } from "@/lib/stripe";
 
 export const metadata: Metadata = { title: "Thank you", robots: { index: false } };
@@ -35,8 +36,7 @@ export default async function SuccessPage(props: PageProps<"/checkout/success">)
       {order ? (
         <>
           <p>
-            Your order <strong>{order.number}</strong> is confirmed. A receipt is on its way to{" "}
-            {order.email ?? "your inbox"}.
+            Your order <strong>{order.number}</strong> is confirmed — please keep this number for your records.
           </p>
           <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: "0.4rem" }}>
             {order.items.map((i) => (
@@ -51,9 +51,12 @@ export default async function SuccessPage(props: PageProps<"/checkout/success">)
           </p>
         </>
       ) : (
-        <p>Your order has been received. A confirmation is on its way to your inbox.</p>
+        <p>Your order has been received.</p>
       )}
-      <p>We&apos;ll let you know as soon as your candles are on their way.</p>
+      <p>
+        Every order is packed by hand. If you have any questions, email{" "}
+        <a href={`mailto:${SHOP.contact.email}`}>{SHOP.contact.email}</a> and quote your order number.
+      </p>
       <Link href="/shop" className="btn">
         Continue shopping
       </Link>

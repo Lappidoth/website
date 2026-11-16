@@ -2,9 +2,11 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { CUSTOMER_STATUSES, listCustomers } from "@/lib/crm";
 import { fmtDate, fullName } from "../format";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export default async function CustomersPage(props: PageProps<"/admin/customers">) {
   await connection();
+  await requireAdmin();
   const sp = await props.searchParams;
   const q = typeof sp.q === "string" ? sp.q : "";
   const status = typeof sp.status === "string" ? sp.status : "";

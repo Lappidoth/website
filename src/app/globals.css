@@ -333,8 +333,11 @@ button {
   .wordmark img { height: 36px !important; }
 
   .nav {
-    position: fixed;
-    inset: var(--header-h) 0 auto 0;
+    /* Anchored to the sticky header, so it always opens directly beneath it */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     flex-direction: column;
     gap: 0;
     background: var(--paper);
@@ -705,7 +708,7 @@ button {
 .ritual .num {
   font-family: var(--font-serif);
   font-style: italic;
-  color: var(--stone);
+  color: var(--ink-soft);
 }
 
 .ritual h3 { font-size: 1.45rem; }

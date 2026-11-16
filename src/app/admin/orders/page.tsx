@@ -3,9 +3,11 @@ import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 import { ORDER_STATUSES, ORDER_STATUS_LABELS, fmtDate } from "../format";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export default async function OrdersPage(props: PageProps<"/admin/orders">) {
   await connection();
+  await requireAdmin();
   const sp = await props.searchParams;
   const status = typeof sp.status === "string" && sp.status ? sp.status : "";
   const orders = await db.order.findMany({
@@ -53,7 +55,12 @@ export default async function OrdersPage(props: PageProps<"/admin/orders">) {
                 <td className="muted num" style={{ whiteSpace: "nowrap" }}>{fmtDate(o.createdAt)}</td>
                 <td>{o.shippingName ?? o.email ?? "—"}</td>
                 <td className="muted">{o.items.map((i) => `${i.quantity}× ${i.name}`).join(", ")}</td>
-                <td><span className="pill" data-v={o.status}>{ORDER_STATUS_LABELS[o.status] ?? o.status}</span></td>
+                <td>
+                  <span className="pill" data-v={o.status}>{ORDER_STATUS_LABELS[o.status] ?? o.status}</span>
+                  {o.shippingMethod?.toLowerCase().startsWith("express") && (
+                    <span className="pill" data-v="EXPRESS" style={{ marginLeft: "0.4rem" }}>Express</span>
+                  )}
+                </td>
                 <td className="num">{formatPrice(o.totalCents, o.currency)}</td>
               </tr>
             ))}

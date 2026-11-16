@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 
 function csvCell(v: unknown) {
@@ -8,6 +9,12 @@ function csvCell(v: unknown) {
 }
 
 export async function GET() {
+  try {
+    await requireAdmin();
+  } catch {
+    return new Response("Authentication required.", { status: 401 });
+  }
+
   const customers = await db.customer.findMany({
     orderBy: { createdAt: "asc" },
     include: { tags: true },

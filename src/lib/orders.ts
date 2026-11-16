@@ -12,9 +12,25 @@ import { getStripe, siteUrl } from "./stripe";
 import type { PricedLine } from "./basket";
 
 async function nextOrderNumber() {
-  const last = await db.order.findFirst({ orderBy: { createdAt: "desc" }, select: { number: true } });
-  const n = last ? parseInt(last.number.replace(/\D/g, ""), 10) : 1000;
-  return `LC-${(Number.isFinite(n) ? n : 1000) + 1}`;
+  // A Postgres sequence: unique under concurrency and never reused.
+  const [row] = await db.$queryRaw<{ n: bigint }[]>`SELECT nextval('order_number_seq') AS n`;
+  return `LC-${row.n}`;
+}
+
+/** "Standard…" / "Express…" as the customer chose it at checkout. */
+async function shippingMethodFor(session: Stripe.Checkout.Session) {
+  const rate = session.shipping_cost?.shipping_rate;
+  if (!rate) return null;
+  if (typeof rate !== "string") return rate.display_name ?? null;
+  try {
+    const full = await getStripe()?.shippingRates.retrieve(rate);
+    if (full?.display_name) return full.display_name;
+  } catch {
+    // fall through to matching on price
+  }
+  const paid = session.shipping_cost?.amount_total ?? 0;
+  const match = SHOP.shippingOptions.find((o) => o.amountCents === paid) ?? SHOP.shippingOptions[0];
+  return match.name;
 }
 
 export async function createCheckout(
@@ -109,10 +125,15 @@ export async function fulfilCheckoutSession(session: Stripe.Checkout.Session) {
 
   const order = await db.order.findUnique({ where: { id: orderId }, include: { items: true } });
   if (!order) return null;
+  // The payment must belong to the checkout we created for this order.
+  if (order.checkoutRef && order.checkoutRef !== session.id) return null;
   if (order.status !== "PENDING") return order; // already processed
 
   const details = session.customer_details;
-  const shipping = session.collected_information?.shipping_details ?? null;
+  // Newer Stripe API versions nest the address under collected_information.
+  const legacy = (session as { shipping_details?: { name?: string | null; address?: unknown } | null }).shipping_details;
+  const shipping = session.collected_information?.shipping_details ?? legacy ?? null;
+  const shippingMethod = await shippingMethodFor(session);
   const email = details?.email?.toLowerCase();
 
   let customerId: string | null = null;
@@ -142,6 +163,7 @@ export async function fulfilCheckoutSession(session: Stripe.Checkout.Session) {
       subtotalCents: session.amount_subtotal ?? order.subtotalCents,
       shippingCents: session.shipping_cost?.amount_total ?? 0,
       discountCents: session.total_details?.amount_discount ?? 0,
+      shippingMethod,
       shippingName: shipping?.name ?? details?.name ?? null,
       shippingAddress: shipping?.address ? JSON.stringify(shipping.address) : null,
       paymentRef: typeof session.payment_intent === "string" ? session.payment_intent : (session.payment_intent?.id ?? null),

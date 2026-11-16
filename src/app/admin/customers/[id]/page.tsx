@@ -5,9 +5,11 @@ import { CUSTOMER_STATUSES, getCustomer } from "@/lib/crm";
 import { formatPrice } from "@/lib/format";
 import { TYPE_LABELS, fmtDate, fullName } from "../../format";
 import { addNote, deleteCustomer, updateCustomer } from "./actions";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export default async function CustomerPage(props: PageProps<"/admin/customers/[id]">) {
   await connection();
+  await requireAdmin();
   const { id } = await props.params;
   const c = await getCustomer(id);
   if (!c) notFound();

@@ -11,7 +11,7 @@
     "db:studio": "prisma studio",
     "setup": "prisma migrate deploy && prisma db seed",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma migrate deploy && prisma db seed && next build",
+    "vercel-build": "sh scripts/vercel-build.sh",
     "db:migrate": "prisma migrate dev"
   },
   "dependencies": {

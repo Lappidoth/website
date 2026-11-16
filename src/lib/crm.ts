@@ -72,17 +72,25 @@ export async function upsertCustomer(input: UpsertInput) {
   const existing = await db.customer.findUnique({ where: { email: input.email } });
 
   if (!existing) {
-    return db.customer.create({
-      data: {
-        email: input.email,
-        firstName: input.firstName || null,
-        lastName: input.lastName || null,
-        phone: input.phone || null,
-        source: input.source,
-        status: input.status ?? "LEAD",
-        marketingOptIn: input.marketingOptIn ?? false,
-      },
-    });
+    try {
+      return await db.customer.create({
+        data: {
+          email: input.email,
+          firstName: input.firstName || null,
+          lastName: input.lastName || null,
+          phone: input.phone || null,
+          source: input.source,
+          status: input.status ?? "LEAD",
+          marketingOptIn: input.marketingOptIn ?? false,
+        },
+      });
+    } catch (err) {
+      // Two requests created the same person at once (e.g. the payment webhook
+      // and the thank-you page). The other one won — carry on with theirs.
+      const winner = await db.customer.findUnique({ where: { email: input.email } });
+      if (!winner) throw err;
+      return winner;
+    }
   }
 
   const current = existing.status as CustomerStatus;

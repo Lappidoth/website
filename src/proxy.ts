@@ -1,27 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { adminConfigured, isAdminAuthHeader } from "@/lib/admin-auth";
 
 /**
- * Guards the CRM (/admin) with HTTP Basic auth using ADMIN_USER / ADMIN_PASSWORD.
+ * Guards the back office (/admin) with HTTP Basic auth using ADMIN_USER /
+ * ADMIN_PASSWORD. Admin pages and actions also call requireAdmin() themselves.
  * This is a starting point — swap for real accounts (e.g. Auth.js) when the
  * team grows beyond a single login.
  */
 export function proxy(request: NextRequest) {
-  const user = process.env.ADMIN_USER;
-  const pass = process.env.ADMIN_PASSWORD;
-
-  if (!user || !pass) {
+  if (!adminConfigured()) {
     return new NextResponse("Admin is not configured.", { status: 503 });
   }
 
-  const header = request.headers.get("authorization");
-  if (header?.startsWith("Basic ")) {
-    try {
-      const [u, ...rest] = atob(header.slice(6)).split(":");
-      if (u === user && rest.join(":") === pass) return NextResponse.next();
-    } catch {
-      // fall through to challenge
-    }
-  }
+  if (isAdminAuthHeader(request.headers.get("authorization"))) return NextResponse.next();
 
   return new NextResponse("Authentication required.", {
     status: 401,

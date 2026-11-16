@@ -29,8 +29,10 @@ npm run dev
 
 ## Deploying (Vercel + Neon)
 
-On Vercel, `npm run vercel-build` runs automatically: it applies database migrations, refreshes
-the product catalogue from `prisma/seed.ts`, then builds the site. Products, prices and
+On Vercel, `npm run vercel-build` runs automatically (see `scripts/vercel-build.sh`). On the
+live (production) deployment it applies database migrations, refreshes the product catalogue
+from `prisma/seed.ts`, then builds the site. Preview deployments only build — they never
+change the database. Server code runs in London (`vercel.json`), next to the database. Products, prices and
 descriptions therefore live in `prisma/seed.ts`. Edit them there and push.
 
 Environment variables to set in Vercel (Project → Settings → Environment Variables):
@@ -77,6 +79,15 @@ src/
   lib/shop-config.ts     Delivery rates, free-delivery threshold, contact details
   proxy.ts               Password-protects /admin
 ```
+
+## Security notes
+
+- The back office is checked twice: `src/proxy.ts` guards every `/admin` URL, and each admin
+  page, action and download calls `requireAdmin()` (`src/lib/admin-auth.ts`).
+- Order numbers come from a Postgres sequence (`order_number_seq`), so they are unique and
+  never reused.
+- Security headers are set in `next.config.ts`; `robots.txt` keeps `/admin`, `/api`, the
+  basket and checkout out of search engines.
 
 ## How the CRM works
 

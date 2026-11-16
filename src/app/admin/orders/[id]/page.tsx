@@ -5,9 +5,11 @@ import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 import { ORDER_STATUSES, ORDER_STATUS_LABELS, fmtAddress, fmtDate } from "../../format";
 import { deleteOrder, markDispatched, setOrderStatus } from "./actions";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export default async function OrderPage(props: PageProps<"/admin/orders/[id]">) {
   await connection();
+  await requireAdmin();
   const { id } = await props.params;
   const o = await db.order.findUnique({ where: { id }, include: { items: true, customer: true } });
   if (!o) notFound();
@@ -34,6 +36,14 @@ export default async function OrderPage(props: PageProps<"/admin/orders/[id]">) 
           <section className="panel">
             <h2>Ship to</h2>
             <dl className="kv">
+              <dt>Delivery</dt>
+              <dd>
+                {o.shippingMethod ? (
+                  <strong>{o.shippingMethod}</strong>
+                ) : (
+                  "—"
+                )}
+              </dd>
               <dt>Name</dt>
               <dd>{o.shippingName ?? "—"}</dd>
               <dt>Address</dt>

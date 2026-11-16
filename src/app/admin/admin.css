@@ -308,3 +308,9 @@
   background: var(--ember);
   color: #fff;
 }
+
+.pill[data-v="EXPRESS"] {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #fff;
+}
