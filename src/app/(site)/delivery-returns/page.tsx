@@ -34,8 +34,8 @@ export default function Page() {
       <h2>Returns</h2>
       <p>
         You can cancel your order for any reason within 14 days of receiving it. Let us know at{" "}
-        <a href={`mailto:${SHOP.contact.email}`}>{SHOP.contact.email}</a>, then return the items unused
-        and in their original packaging within a further 14 days. Return postage is your
+        <a href={`mailto:${SHOP.contact.email}`}>{SHOP.contact.email}</a>, and we&apos;ll reply with the
+        return address. Then return the items unused and in their original packaging within a further 14 days. Return postage is your
         responsibility unless the item is faulty. We&apos;ll refund you, including the original
         standard delivery charge, within 14 days of receiving the return.
       </p>

@@ -8,8 +8,9 @@ export default function Page() {
   return (
     <PolicyPage title="Privacy Policy" updated="November 2026">
       <p>
-        Lappidoth &amp; Co. is the data controller for the personal information you share with us. We
-        handle it in line with UK GDPR and the Data Protection Act 2018.
+        {SHOP.company.name} (company number {SHOP.company.number}, {SHOP.company.address.join(", ")}) is the
+        data controller for the personal information you share with us. We handle it in line with UK GDPR
+        and the Data Protection Act 2018.
       </p>
       <h2>What we collect</h2>
       <ul>
@@ -26,8 +27,8 @@ export default function Page() {
       </ul>
       <h2>Who we share it with</h2>
       <p>
-        Only the services that help us run the shop: Stripe (payments), our website host, and our
-        delivery carrier. We never sell your data.
+        Only the services that help us run the shop: Stripe (payments), Vercel and Neon (website hosting
+        and database), and our delivery carrier. We never sell your data.
       </p>
       <h2>Cookies</h2>
       <p>

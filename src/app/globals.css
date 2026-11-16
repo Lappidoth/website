@@ -888,6 +888,13 @@ button {
   opacity: 0.6;
 }
 
+.footer-legal {
+  margin-top: 1.25rem;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  opacity: 0.6;
+}
+
 @media (max-width: 960px) {
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-brand { grid-column: 1 / -1; }
@@ -1367,10 +1374,3 @@ button {
 .prose h3 { color: var(--ink); font-size: 1.3rem; margin-top: 0.5rem; }
 .prose ul { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.5rem; }
 .prose strong { color: var(--ink); font-weight: 600; }
-
-.draft-note {
-  border: 1px dashed var(--ember);
-  color: var(--ember);
-  padding: 0.9rem 1.1rem;
-  font-size: 0.85rem;
-}

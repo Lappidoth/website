@@ -45,6 +45,10 @@ export function SiteFooter() {
           <span>© {new Date().getFullYear()} Lappidoth &amp; Co.</span>
           <span>Hand-poured in small batches in the UK</span>
         </div>
+        <p className="footer-legal">
+          {SHOP.company.name} is registered in {SHOP.company.registeredIn}, company number {SHOP.company.number}.{" "}
+          {SHOP.company.address.join(", ")}.
+        </p>
       </div>
     </footer>
   );

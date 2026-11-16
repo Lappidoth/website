@@ -17,5 +17,11 @@ export const SHOP = {
     phone: "+44 (0) 7423 229556",
     phoneHref: "+447423229556",
   },
+  company: {
+    name: "Lappidoth & Co.",
+    number: "16886232",
+    registeredIn: "England and Wales",
+    address: ["Bartle House", "Oxford Court", "Manchester", "M2 3WQ"],
+  },
   maxQuantityPerLine: 20,
 };

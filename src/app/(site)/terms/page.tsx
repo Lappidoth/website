@@ -10,15 +10,28 @@ export default function Page() {
     <PolicyPage title="Terms of Sale" updated="November 2026">
       <h2>About us</h2>
       <p>
-        This website is operated by Lappidoth &amp; Co. [add trading name / company number and registered
-        address]. Contact us at <a href={`mailto:${SHOP.contact.email}`}>{SHOP.contact.email}</a> or{" "}
-        {SHOP.contact.phone}.
+        This website is operated by {SHOP.company.name}, a company registered in {SHOP.company.registeredIn}{" "}
+        (company number {SHOP.company.number}).
+      </p>
+      <p>
+        {SHOP.company.name}
+        <br />
+        {SHOP.company.address.map((line) => (
+          <span key={line}>
+            {line}
+            <br />
+          </span>
+        ))}
+      </p>
+      <p>
+        Contact us at <a href={`mailto:${SHOP.contact.email}`}>{SHOP.contact.email}</a> or{" "}
+        <a href={`tel:${SHOP.contact.phoneHref}`}>{SHOP.contact.phone}</a>.
       </p>
       <h2>Orders &amp; prices</h2>
       <p>
         All prices are in pounds sterling. We are not currently VAT registered, so no VAT is charged.
-        Delivery charges are shown at checkout before you pay. Your contract with us is formed when we
-        email to confirm your order.
+        Delivery charges are shown at checkout before you pay. Your contract with us is formed when your
+        payment is accepted and your order confirmation, with its order number, is shown.
       </p>
       <h2>Payment</h2>
       <p>
